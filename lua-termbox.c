@@ -37,8 +37,11 @@ static int l_tb_clear(lua_State *L)
 
 static int l_tb_set_clear_attributes(lua_State *L)
 {
-  uint16_t fg = luaL_checkunsigned(L, -2);
-  uint16_t bg = luaL_checkunsigned(L, -1);
+  uint16_t fg = luaL_checkunsigned(L, 1);
+  uint16_t bg = luaL_checkunsigned(L, 2);
+
+  lua_pop(L, 2);
+
   tb_set_clear_attributes(fg, bg);
   return 0;
 }
@@ -51,8 +54,11 @@ static int l_tb_present(lua_State *L)
 
 static int l_tb_set_cursor(lua_State *L)
 {
-  int cx = luaL_checkinteger(L, -2);
-  int cy = luaL_checkinteger(L, -1);
+  int cx = luaL_checkinteger(L, 1);
+  int cy = luaL_checkinteger(L, 2);
+
+  lua_pop(L, 2);
+
   tb_set_cursor(cx, cy);
   return 0;
 }
@@ -76,9 +82,9 @@ static int l_tb_put_cell(lua_State *L)
     .bg = luaL_checkinteger(L, -1),
   };
 
-  tb_put_cell(x, y, &cell);
+  lua_pop(L, 6);
 
-  lua_pop(L, 6); /* 3+3 */
+  tb_put_cell(x, y, &cell);
 
   return 0;
 }
@@ -90,6 +96,8 @@ static int l_tb_change_cell(lua_State* L)
   char ch     = luaL_checkstring(L, 3)[0];
   uint16_t fg = luaL_checkunsigned(L, 4);
   uint16_t bg = luaL_checkunsigned(L, 5);
+
+  lua_pop(L, 5);
 
   tb_change_cell(x, y, ch, fg, bg);
   return 0;
@@ -123,6 +131,8 @@ static int l_tb_blit(lua_State *L)
     lua_pop(L, 4); // pop table + elements
   }
 
+  lua_pop(L, 5);
+
   tb_blit(x, y, w, h, cells);
 
   free(cells);
@@ -132,6 +142,8 @@ static int l_tb_blit(lua_State *L)
 static int l_tb_select_input_mode(lua_State *L)
 {
   int mode = luaL_checkinteger(L, 1);
+
+  lua_pop(L, 1);
 
   lua_pushinteger(L, tb_select_input_mode(mode));
   return 1;
@@ -165,6 +177,8 @@ static int l_tb_peek_event(lua_State *L)
   lua_pushnumber(L, event.h);
   lua_setfield(L, 1, "h");
 
+  lua_pop(L, 2);
+
   lua_pushinteger(L, ret);
 
   return 1;
@@ -197,6 +211,8 @@ static int l_tb_poll_event(lua_State *L)
   lua_pushnumber(L, event.h);
   lua_setfield(L, 1, "h");
 
+  lua_pop(L, 1);
+
   lua_pushinteger(L, ret);
 
   return 1;
@@ -205,6 +221,9 @@ static int l_tb_poll_event(lua_State *L)
 static int l_tb_utf8_char_length(lua_State *L)
 {
   char c = luaL_checkstring(L, 1)[0];
+
+  lua_pop(L, 1);
+
   lua_pushinteger(L, tb_utf8_char_length(c));
   return 1;
 }
@@ -214,6 +233,8 @@ static int l_tb_utf8_char_to_unicode(lua_State *L)
   uint32_t *out = (uint32_t*)luaL_checkunsigned(L, 1);
   const char *c = luaL_checkstring(L, 2);
 
+  lua_pop(L, 2);
+
   lua_pushinteger(L, tb_utf8_char_to_unicode(out, c));
   return 1;
 }
@@ -222,6 +243,8 @@ static int l_tb_utf8_unicode_to_char(lua_State *L)
 {
   uint32_t *out = (uint32_t*)luaL_checkunsigned(L, 1);
   const char *c = luaL_checkstring(L, 2);
+
+  lua_pop(L, 2);
 
   lua_pushinteger(L, tb_utf8_char_to_unicode(out, c));
   return 1;
