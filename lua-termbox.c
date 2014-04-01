@@ -3,7 +3,8 @@
 #include <stdlib.h> //malloc, free
 #include <string.h> //strlen, strncpy
 
-#include <termbox.h>
+/* #include <termbox.h> */
+#include "/home/robert/coden/projects/github/termbox/src/termbox.h"
 
 static int l_tb_init(lua_State *L)
 {
@@ -149,6 +150,16 @@ static int l_tb_select_input_mode(lua_State *L)
   return 1;
 }
 
+static int l_tb_select_output_mode(lua_State *L)
+{
+  int mode = luaL_checkinteger(L, 1);
+
+  lua_pop(L, 1);
+
+  lua_pushinteger(L, tb_select_output_mode(mode));
+  return 1;
+}
+
 static int l_tb_peek_event(lua_State *L)
 {
   luaL_checktype(L, 1, LUA_TTABLE);
@@ -230,7 +241,7 @@ static int l_tb_utf8_char_length(lua_State *L)
 
 static int l_tb_utf8_char_to_unicode(lua_State *L)
 {
-  uint32_t *out = (uint32_t*)luaL_checkunsigned(L, 1);
+  uint32_t *out = (uint32_t*)(uintptr_t)luaL_checkunsigned(L, 1);
   const char *c = luaL_checkstring(L, 2);
 
   lua_pop(L, 2);
@@ -241,7 +252,7 @@ static int l_tb_utf8_char_to_unicode(lua_State *L)
 
 static int l_tb_utf8_unicode_to_char(lua_State *L)
 {
-  uint32_t *out = (uint32_t*)luaL_checkunsigned(L, 1);
+  uint32_t *out = (uint32_t*)(uintptr_t)luaL_checkunsigned(L, 1);
   const char *c = luaL_checkstring(L, 2);
 
   lua_pop(L, 2);
@@ -263,6 +274,7 @@ static const struct luaL_Reg l_termbox[] = {
   {"change_cell",            l_tb_change_cell},
   {"blit",                   l_tb_blit},
   {"select_input_mode",      l_tb_select_input_mode},
+  {"select_output_mode",     l_tb_select_output_mode},
   {"peek_event",             l_tb_peek_event},
   {"poll_event",             l_tb_poll_event},
   {"utf8_char_length",       l_tb_utf8_char_length},
@@ -383,6 +395,11 @@ int luaopen_termbox (lua_State *L)
   REGISTER_CONSTANT(TB_INPUT_CURRENT);
   REGISTER_CONSTANT(TB_INPUT_ESC);
   REGISTER_CONSTANT(TB_INPUT_ALT);
+
+  REGISTER_CONSTANT(TB_OUTPUT_NORMAL);
+  REGISTER_CONSTANT(TB_OUTPUT_256);
+  REGISTER_CONSTANT(TB_OUTPUT_216);
+  REGISTER_CONSTANT(TB_OUTPUT_GRAYSCALE);
 
   REGISTER_CONSTANT(TB_EOF);
   return 1;

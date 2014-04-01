@@ -1,4 +1,4 @@
-tb = require 'termbox'
+tb = require "termbox"
 
 if not tb.init() then 
   print("FAIL: tb_init")

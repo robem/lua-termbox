@@ -3,7 +3,8 @@
 prefix = ARGUMENTS.get('PREFIX','/usr')
 
 env = Environment(LIBS=['libtermbox'],
-                  CCFLAGS=['-g','-Wall','-Werror'])
+                  CCFLAGS=['-Wall','-Werror'],
+                  LIBPATH='/home/robert/coden/projects/github/termbox/build/src')
 
 termbox = env.SharedLibrary(target='termbox', 
                             source=['lua-termbox.c'],
